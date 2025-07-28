@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation Result</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Translation Result</h1>
+        </header>
+
+        <main>
+            <div class="result-container">
+                <div class="result-content">
+                    <div class="result-item">
+                        <strong>Original:</strong>
+                        <p>{{.Original}}</p>
+                    </div>
+                    <div class="result-item">
+                        <strong>Model:</strong>
+                        <p>{{.Model}}</p>
+                    </div>
+                    <div class="result-item">
+                        <strong>Translation:</strong>
+                        <p>{{.Translation}}</p>
+                    </div>
+                </div>
+                <a href="/" class="button">Translate Another</a>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

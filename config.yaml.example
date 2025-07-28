@@ -1,0 +1,12 @@
+# Translation Service Configuration
+server:
+  port: "8080"
+
+llm:
+  openai_endpoint: "https://idealab.alibaba-inc.com/api/openai/v1"
+  openai_key: "your-openai-key"
+  anthropic_endpoint: "https://api.anthropic.com/v1"
+  anthropic_key: "your-anthropic-key"
+  timeout: 30
+
+debug: false
