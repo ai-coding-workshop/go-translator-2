@@ -4,11 +4,14 @@
 .PHONY: help
 help:
 	@echo "Available targets:"
-	@echo "  format    - Format code with goimports and gofmt"
-	@echo "  lint      - Run golangci-lint for static analysis"
-	@echo "  build     - Build the application"
-	@echo "  run       - Run the application"
-	@echo "  clean     - Clean build artifacts"
+	@echo "  format     - Format code with goimports and gofmt"
+	@echo "  lint       - Run golangci-lint for static analysis"
+	@echo "  build      - Build the application"
+	@echo "  run        - Run the application"
+	@echo "  clean      - Clean build artifacts"
+	@echo "  test       - Run all tests"
+	@echo "  bench      - Run benchmarks"
+	@echo "  install-tools - Install development tools"
 
 # Format code with goimports and gofmt
 .PHONY: format
@@ -40,6 +43,18 @@ run:
 clean:
 	@echo "Cleaning build artifacts..."
 	rm -rf bin/
+
+# Run all tests
+.PHONY: test
+test:
+	@echo "Running tests..."
+	go test ./...
+
+# Run benchmarks
+.PHONY: bench
+bench:
+	@echo "Running benchmarks..."
+	go test -bench=.
 
 # Install development tools
 .PHONY: install-tools
