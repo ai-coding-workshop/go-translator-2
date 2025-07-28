@@ -35,8 +35,11 @@ func TestHomeHandler(t *testing.T) {
 	// Create a ResponseRecorder to record the response
 	rr := httptest.NewRecorder()
 
+	// Create a translator service
+	service := createTestTranslatorService()
+
 	// Create the handler
-	handler := NewHomeHandler()
+	handler := NewHomeHandler(service)
 
 	// Serve the HTTP request
 	handler.ServeHTTP(rr, req)

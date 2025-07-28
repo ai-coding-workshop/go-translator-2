@@ -45,27 +45,87 @@ func init() {
 }
 
 // HomeHandler serves the main web page
-func NewHomeHandler() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" {
-			http.NotFound(w, r)
-			return
+type HomeHandler struct {
+	translatorService *services.TranslatorService
+}
+
+func NewHomeHandler(translatorService *services.TranslatorService) http.HandlerFunc {
+	handler := &HomeHandler{
+		translatorService: translatorService,
+	}
+
+	return handler.ServeHTTP
+}
+
+func (h *HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+
+	// Render home template
+	if homeTemplate != nil {
+		// Get supported models and create options for the template
+		supportedModels := h.translatorService.GetSupportedModels()
+
+		// Create a map of model identifiers to display names
+		modelOptions := make(map[string]string)
+		for _, model := range supportedModels {
+			// Use the model identifier as both key and value for now
+			// In a more sophisticated implementation, we could map to user-friendly names
+			modelOptions[model] = h.getModelDisplayName(model)
 		}
 
-		// Render home template
-		if homeTemplate != nil {
-			if err := homeTemplate.Execute(w, nil); err != nil {
-				log.Printf("Error rendering home template: %v", err)
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-				return
-			}
-		} else {
-			// Fallback for testing or when templates are not available
-			w.Header().Set("Content-Type", "text/html")
-			w.WriteHeader(http.StatusOK)
-			fmt.Fprint(w, "<!DOCTYPE html><html><head><title>Translation Service</title></head><body><h1>Translation Service</h1></body></html>")
+		// Pass data to template
+		data := struct {
+			ModelOptions map[string]string
+		}{
+			ModelOptions: modelOptions,
 		}
+
+		if err := homeTemplate.Execute(w, data); err != nil {
+			log.Printf("Error rendering home template: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+	} else {
+		// Fallback for testing or when templates are not available
+		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, "<!DOCTYPE html><html><head><title>Translation Service</title></head><body><h1>Translation Service</h1></body></html>")
 	}
+}
+
+// getModelDisplayName returns a user-friendly display name for a model
+func (h *HomeHandler) getModelDisplayName(model string) string {
+	// Map model identifiers to user-friendly names
+	modelNames := map[string]string{
+		"gpt-3.5-turbo":            "GPT-3.5 Turbo",
+		"gpt-3.5":                  "GPT-3.5",
+		"gpt-4":                    "GPT-4",
+		"gpt-4-turbo":              "GPT-4 Turbo",
+		"gpt-4o":                   "GPT-4O",
+		"claude-3-opus":            "Claude 3 Opus",
+		"claude-3-sonnet":          "Claude 3 Sonnet",
+		"claude-3-haiku":           "Claude 3 Haiku",
+		"claude-3-opus-20240229":   "Claude 3 Opus (2024-02-29)",
+		"claude-3-sonnet-20240229": "Claude 3 Sonnet (2024-02-29)",
+		"claude-3-haiku-20240307":  "Claude 3 Haiku (2024-03-07)",
+		"claude":                   "Claude",
+		"llama":                    "Llama 2 (Mock)",
+		"Qwen3-Coder-Plus":         "Qwen3 Coder Plus",
+		"qwen-max-latest":          "Qwen Max Latest",
+		"qwen-plus":                "Qwen Plus",
+		"qwen2.5-max":              "Qwen 2.5 Max",
+		"qwen2.5-plus":             "Qwen 2.5 Plus",
+	}
+
+	if name, exists := modelNames[model]; exists {
+		return name
+	}
+
+	// Default to the model identifier if no mapping exists
+	return model
 }
 
 // TranslateHandler processes translation requests from the web form

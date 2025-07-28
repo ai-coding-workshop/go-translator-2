@@ -30,7 +30,7 @@ func TestFullServiceIntegration(t *testing.T) {
 	translatorService := services.NewTranslatorService(cfg)
 
 	// Create handlers
-	homeHandler := handlers.NewHomeHandler()
+	homeHandler := handlers.NewHomeHandler(translatorService)
 	translateHandler := handlers.NewTranslateHandler(translatorService)
 	apiHandler := handlers.NewAPIHandler(translatorService)
 

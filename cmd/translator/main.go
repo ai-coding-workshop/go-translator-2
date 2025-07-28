@@ -23,7 +23,7 @@ func main() {
 	translatorService := services.NewTranslatorService(cfg)
 
 	// Create handlers with dependencies
-	homeHandler := handlers.NewHomeHandler()
+	homeHandler := handlers.NewHomeHandler(translatorService)
 	translateHandler := handlers.NewTranslateHandler(translatorService)
 	apiHandler := handlers.NewAPIHandler(translatorService)
 
